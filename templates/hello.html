@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>hello</title>
+    <script type="text/javascript" src="http://hovertree.com/ziyuan/jquery/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript">
+        function request_download() {
+            $.ajax({
+                url: "download/",
+                type: 'GET',
+                data: {'fileName': "testAjaxDownload.txt"},
+                success: function (data, status, xhr) {
+                    console.log("Download file DONE!");
+                    console.log(data); // ajax方式请求的数据只能存放在javascipt内存空间，可以通过javascript访问，但是无法保存到硬盘
+                    console.log(status);
+                    console.log(xhr);
+                    console.log("=====================");
+                },
+                error: function () {
+                    console.log("error")
+                },
+                complete: function () {
+                    console.log("finish")
+                }
+            })
+        }
+
+        function downloadFileByForm() {
+            console.log("ajaxDownloadSynchronized");
+            var url = "download/";
+            var fileName = "testAjaxDownload.txt";
+            var form = $("<form></form>").attr("action", url).attr("method", "post");
+            form.append($("{% csrf_token %}"));
+            form.append($("<input></input>").attr("type", "text").attr("name", "fileName").attr("value", fileName));
+            form.appendTo('body').submit().remove();
+        }
+
+    </script>
+</head>
+<body>
+<form method="post" action="upload_file/" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input name="source_file" type="file"><br>
+    <input type="submit" value="上传">
+</form>
+
+<input type="button" id="testAjax" value="Download" onclick="downloadFileByForm()">
+
+<a href="download/">下载</a>
+
+</body>
+</html>
